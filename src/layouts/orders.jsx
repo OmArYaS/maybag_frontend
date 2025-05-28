@@ -17,25 +17,46 @@ const ProductList = ({ products }) => {
           key={item._id}
           className="flex items-center gap-2 p-2 bg-white/50 rounded-lg border border-gray-100 shadow-sm hover:shadow-md transition-shadow"
         >
-          <img
-            src={item.productId.image}
-            alt={item.productId.name}
-            className="w-12 h-12 object-cover rounded-md border border-gray-100"
-          />
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-900 truncate">
-              {item.productId.name}
-            </p>
-            <div className="flex items-center gap-1.5 text-xs text-gray-500">
-              <span className="font-medium">${item.productId.price}</span>
-              <span>×</span>
-              <span className="font-medium">{item.quantity}</span>
-              <span>=</span>
-              <span className="font-medium text-blue-600">
-                ${(item.productId.price * item.quantity).toFixed(2)}
-              </span>
-            </div>
-          </div>
+          {item.productId ? (
+            <>
+              <img
+                src={item.productId.image}
+                alt={item.productId.name}
+                className="w-12 h-12 object-cover rounded-md border border-gray-100"
+                onError={(e) => {
+                  e.target.src = "https://via.placeholder.com/48?text=No+Image";
+                }}
+              />
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-gray-900 truncate">
+                  {item.productId.name}
+                </p>
+                <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                  <span className="font-medium">${item.productId.price}</span>
+                  <span>×</span>
+                  <span className="font-medium">{item.quantity}</span>
+                  <span>=</span>
+                  <span className="font-medium text-blue-600">
+                    ${(item.productId.price * item.quantity).toFixed(2)}
+                  </span>
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="w-12 h-12 flex items-center justify-center bg-gray-100 rounded-md border border-gray-200">
+                <i className="fi fi-rr-box text-gray-400"></i>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-gray-500 truncate">
+                  Product Deleted
+                </p>
+                <div className="flex items-center gap-1.5 text-xs text-gray-400">
+                  <span>Quantity: {item.quantity}</span>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       ))}
     </div>

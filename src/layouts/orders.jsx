@@ -19,14 +19,20 @@ const ProductList = ({ products }) => {
         >
           {item.productId ? (
             <>
-              <img
-                src={item.productId.image}
-                alt={item.productId.name}
-                className="w-12 h-12 object-cover rounded-md border border-gray-100"
-                onError={(e) => {
-                  e.target.src = "https://via.placeholder.com/48?text=No+Image";
-                }}
-              />
+              <div className="w-12 h-12 relative">
+                <img
+                  src={item.productId.image}
+                  alt={item.productId.name}
+                  className="w-12 h-12 object-cover rounded-md border border-gray-100"
+                  onError={(e) => {
+                    e.target.style.display = "none";
+                    e.target.nextElementSibling.style.display = "flex";
+                  }}
+                />
+                <div className="w-12 h-12 hidden items-center justify-center bg-gray-100 rounded-md border border-gray-200">
+                  <i className="fi fi-rr-box text-gray-400"></i>
+                </div>
+              </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-900 truncate">
                   {item.productId.name}

@@ -6,43 +6,28 @@ import {
   Autoplay,
 } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router";
 import { toast } from "react-toastify";
+import { useQuery } from "@tanstack/react-query";
+import { fetchProducts } from "../service/queryfn.js";
 
 // Import Swiper styles
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
-import { BACKEND_URL } from "../service/queryfn";
 
 export default function Hero() {
-  const [products, setProducts] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["featuredProducts"],
+    queryFn: () => fetchProducts({ limit: 5 }),
+    onError: (error) => {
+      toast.error("Failed to load featured products");
+    },
+  });
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        setIsLoading(true);
-        const response = await fetch(`${BACKEND_URL}/api/products?limit=5`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch products");
-        }
-        const data = await response.json();
-        setProducts(data.data || []);
-      } catch (err) {
-        setError(err.message);
-        toast.error("Failed to load featured products");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchProducts();
-  }, []);
+  const products = data?.data || [];
 
   if (isLoading) {
     return (

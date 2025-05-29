@@ -60,13 +60,6 @@ export async function fetchProducts({
   return res.json();
 }
 
-// api/categories.js
-export async function fetchCategories() {
-  const res = await fetch(`${BACKEND_URL}/api/categories`);
-  if (!res.ok) throw new Error("Failed to fetch categories");
-  return res.json();
-}
-
 export const fetchOrders = async ({
   token,
   search,

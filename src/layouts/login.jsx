@@ -1,19 +1,28 @@
 import { Form, useActionData, useNavigation, Link } from "react-router";
 import { motion } from "framer-motion";
 import { FiMail, FiLock, FiArrowRight } from "react-icons/fi";
+import logo from "../assets/images/logo.png";
 
 export default function Login() {
   const error = useActionData();
   const navigation = useNavigation();
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
+    <div className="min-h-screen  flex items-center justify-center">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         className="bg-white/80 backdrop-blur-lg p-8 rounded-2xl shadow-2xl w-full max-w-md border border-gray-100"
       >
+        <div className="flex flex-col items-center mb-6">
+          <img
+            src={logo}
+            alt="MYA Bags Logo"
+            className="w-32 h-32 object-contain mb-2 drop-shadow-md rounded-2xl"
+            style={{ filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.08))" }}
+          />
+        </div>
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -53,7 +62,7 @@ export default function Login() {
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FiMail className="h-5 w-5 text-gray-400" />
+                  <FiMail className="h-5 w-5 " />
                 </div>
                 <input
                   id="email"
@@ -80,7 +89,7 @@ export default function Login() {
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FiLock className="h-5 w-5 text-gray-400" />
+                  <FiLock className="h-5 w-5 " />
                 </div>
                 <input
                   id="password"
@@ -99,7 +108,7 @@ export default function Login() {
             whileTap={{ scale: 0.98 }}
             type="submit"
             disabled={navigation.state === "submitting"}
-            className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-4 rounded-lg font-medium hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="w-full bg-primary text-white py-3 px-4 rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {navigation.state === "submitting" ? (
               <span className="flex items-center justify-center">
@@ -137,7 +146,7 @@ export default function Login() {
             Don't have an account?{" "}
             <Link
               to="/auth/signup"
-              className="text-blue-600 hover:text-blue-700 font-medium inline-flex items-center gap-1 group"
+              className="text-blue-600 hover:text-pink-700 font-medium inline-flex items-center gap-1 group"
             >
               Register here
               <FiArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />

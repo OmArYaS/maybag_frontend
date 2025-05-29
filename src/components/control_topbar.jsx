@@ -1,11 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchCategories } from "../service/queryfn";
+import { getCategory } from "../service/queryfn";
 import { motion } from "framer-motion";
 
 export default function ControlTopbar({ filters, setFilters, setShowModal }) {
   const { data: categories, isLoading } = useQuery({
     queryKey: ["categories"],
-    queryFn: fetchCategories,
+    queryFn: getCategory,
   });
 
   return (

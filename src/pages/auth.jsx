@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 
 export default function Auth() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-r from-secondary to-primary">
       <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
       <div className="relative min-h-screen flex items-center justify-center p-4">
         <motion.div
@@ -16,17 +16,6 @@ export default function Auth() {
           <Outlet />
         </motion.div>
       </div>
-      <style jsx>{`
-        .bg-grid-pattern {
-          background-image: linear-gradient(
-              to right,
-              #e5e7eb 1px,
-              transparent 1px
-            ),
-            linear-gradient(to bottom, #e5e7eb 1px, transparent 1px);
-          background-size: 24px 24px;
-        }
-      `}</style>
     </div>
   );
 }

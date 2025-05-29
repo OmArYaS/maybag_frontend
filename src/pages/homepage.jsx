@@ -21,11 +21,11 @@ export default function Homepage() {
   }, [location]);
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-      <main className="flex-grow">
-        <Section />
-      </main>
+    <div className="flex flex-col">
+      <div className="bg-secondary">
+        <Hero />
+      </div>
+      <Section />
     </div>
   );
 }

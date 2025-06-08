@@ -134,7 +134,16 @@ export const generatePDF = async (
     });
 
     // Add main orders table
-    const tableColumn = ["ID", "User", "Products", "Total", "Status", "Date"];
+    const tableColumn = [
+      "ID",
+      "User",
+      "Address",
+      "Phone",
+      "Products",
+      "Total",
+      "Status",
+      "Date",
+    ];
 
     const tableRows = allOrders.map((order) => {
       const productsList = order.products
@@ -146,6 +155,8 @@ export const generatePDF = async (
       return [
         order._id.slice(-6),
         order.userId?.username || "N/A",
+        order.userId?.address || "N/A",
+        order.userId?.phone || "N/A",
         productsList,
         `$${order.totalAmount}`,
         order.status,
@@ -175,11 +186,13 @@ export const generatePDF = async (
       },
       columnStyles: {
         0: { cellWidth: 15 }, // ID
-        1: { cellWidth: 25 }, // User
-        2: { cellWidth: 70 }, // Products
-        3: { cellWidth: 20 }, // Total
-        4: { cellWidth: 25 }, // Status
-        5: { cellWidth: 25 }, // Date
+        1: { cellWidth: 20 }, // User
+        2: { cellWidth: 30 }, // Address
+        3: { cellWidth: 20 }, // Phone
+        4: { cellWidth: 50 }, // Products
+        5: { cellWidth: 20 }, // Total
+        6: { cellWidth: 20 }, // Status
+        7: { cellWidth: 20 }, // Date
       },
       alternateRowStyles: {
         fillColor: [245, 245, 245],

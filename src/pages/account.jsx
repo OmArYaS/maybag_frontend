@@ -120,7 +120,11 @@ export default function Account() {
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                onClick={logout}
+                onClick={() => {
+                  logout();
+                  // Trigger storage event to update Topnav
+                  window.dispatchEvent(new Event("storage"));
+                }}
                 className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors"
               >
                 Logout

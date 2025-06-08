@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import logo from "../assets/images/logo2.png";
 import { NavLink, Outlet } from "react-router";
 import DashboardLink from "../components/dashlink";
@@ -7,6 +7,16 @@ import Footer from "./footer";
 
 export default function Topnav() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setIsLoggedIn(!!localStorage.getItem("token"));
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
 
   const menuItems = [
     { to: "products", label: "Products" },
@@ -57,7 +67,7 @@ export default function Topnav() {
 
         {/* User Actions */}
         <div className="hidden md:flex justify-evenly items-center w-1/3 h-full">
-          <NavLink
+          {/* <NavLink
             to="/wishlist"
             className="hover:text-primary transition-colors duration-300"
           >
@@ -65,7 +75,7 @@ export default function Topnav() {
               <i className="fi fi-rs-heart text-xl"></i>
               <span>Wishlist</span>
             </div>
-          </NavLink>
+          </NavLink> */}
           <NavLink
             to="/cart"
             className="hover:text-primary transition-colors duration-300"
@@ -75,7 +85,7 @@ export default function Topnav() {
               <span>Cart</span>
             </div>
           </NavLink>
-          {localStorage.getItem("token") ? (
+          {isLoggedIn ? (
             <NavLink
               to="/account"
               className="hover:text-primary transition-colors duration-300"
@@ -151,7 +161,7 @@ export default function Topnav() {
                     <span>Cart</span>
                   </div>
                 </NavLink>
-                {localStorage.getItem("token") ? (
+                {isLoggedIn ? (
                   <NavLink
                     to="/account"
                     className="hover:text-primary transition-colors duration-300"

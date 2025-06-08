@@ -4,12 +4,18 @@ import { motion } from "framer-motion";
 
 export default function Productcard({ item }) {
   const navigate = useNavigate();
+  const isOutOfStock = item.stock <= 0;
 
   return (
     <motion.div
       whileHover={{ y: -5 }}
-      className="productcard flex flex-col justify-between bg-white h-[30vh] md:h-[40vh] rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300"
+      className="productcard flex flex-col justify-between bg-white h-[30vh] md:h-[40vh] rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 relative"
     >
+      {isOutOfStock && (
+        <div className="absolute top-2 right-2 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-semibold z-10">
+          Out of Stock
+        </div>
+      )}
       <NavLink
         to={`/product/${item._id}`}
         className="flex flex-col justify-between h-[80%] p-4"
@@ -35,11 +41,16 @@ export default function Productcard({ item }) {
       </NavLink>
       <motion.button
         whileTap={{ scale: 0.95 }}
-        className="bg-primary text-white h-[10%] mb-4 rounded-full p-2 text-sm font-medium cursor-pointer mx-4 hover:bg-primary/90 transition-colors duration-300 flex items-center justify-center gap-2"
-        onClick={() => addToCart(item._id, 1, navigate)}
+        disabled={isOutOfStock}
+        className={`${
+          isOutOfStock
+            ? "bg-gray-400 cursor-not-allowed"
+            : "bg-primary hover:bg-primary/90"
+        } text-white h-[10%] mb-4 rounded-full p-2 text-sm font-medium mx-4 transition-colors duration-300 flex items-center justify-center gap-2`}
+        onClick={() => !isOutOfStock && addToCart(item._id, 1, navigate)}
       >
         <i className="fi fi-rr-shopping-cart"></i>
-        Add to Cart
+        {isOutOfStock ? "Out of Stock" : "Add to Cart"}
       </motion.button>
     </motion.div>
   );

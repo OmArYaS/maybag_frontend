@@ -11,7 +11,9 @@ export default function Product() {
   const navigate = useNavigate();
   const data = useLoaderData();
   const [quantity, setQuantity] = useState(1);
-  const [selectedImage, setSelectedImage] = useState(data.image);
+  const images =
+    data.images && data.images.length > 0 ? data.images : [data.image];
+  const [selectedImage, setSelectedImage] = useState(images[0]);
   const [showSuccess, setShowSuccess] = useState(false);
   const [error, setError] = useState(null);
 
@@ -54,10 +56,6 @@ export default function Product() {
     setQuantity(newQuantity);
   };
 
-  const handleImageClick = (image) => {
-    setSelectedImage(image);
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
@@ -68,16 +66,19 @@ export default function Product() {
         >
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-8">
             {/* Product Images */}
-            <div className="space-y-4">
+            <div className="flex flex-col items-center gap-4">
+              {/* Main Image */}
               <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
+                key={selectedImage}
+                initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="relative aspect-square rounded-xl overflow-hidden bg-gray-100"
+                transition={{ type: "spring", stiffness: 200, damping: 20 }}
+                className="relative w-full max-w-md aspect-square rounded-xl overflow-hidden bg-gray-100 shadow-lg"
               >
                 <img
                   src={selectedImage}
                   alt={data.name}
-                  className="w-full h-full object-contain hover:scale-105 transition-transform duration-300"
+                  className="w-full h-full object-contain transition-transform duration-300 hover:scale-105"
                 />
                 {data.stock <= 5 && data.stock > 0 && (
                   <div className="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-medium">
@@ -90,21 +91,21 @@ export default function Product() {
                   </div>
                 )}
               </motion.div>
-
-              {/* Thumbnail Gallery */}
-              {data.images && data.images.length > 1 && (
-                <div className="grid grid-cols-4 gap-2 mt-4">
-                  {data.images.map((image, index) => (
+              {/* Thumbnails */}
+              {images.length > 1 && (
+                <div className="flex gap-2 mt-2 justify-center">
+                  {images.map((image, index) => (
                     <motion.button
                       key={index}
-                      whileHover={{ scale: 1.05 }}
+                      whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.95 }}
-                      onClick={() => handleImageClick(image)}
-                      className={`relative aspect-square rounded-lg overflow-hidden border-2 ${
+                      onClick={() => setSelectedImage(image)}
+                      className={`rounded-lg overflow-hidden border-2 transition-all duration-200 ${
                         selectedImage === image
-                          ? "border-primary"
-                          : "border-transparent"
+                          ? "border-primary ring-2 ring-primary"
+                          : "border-gray-200"
                       }`}
+                      style={{ width: 60, height: 60 }}
                     >
                       <img
                         src={image}
@@ -299,3 +300,13 @@ export default function Product() {
     </div>
   );
 }
+
+/*
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+*/

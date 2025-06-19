@@ -1,10 +1,18 @@
 import { NavLink, useNavigate } from "react-router";
 import { addToCart } from "../service/addcart.js";
 import { motion } from "framer-motion";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, Pagination } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/pagination";
 
 export default function Productcard({ item }) {
   const navigate = useNavigate();
   const isOutOfStock = item.stock <= 0;
+
+  // Determine the main image and image count
+  const images =
+    item.images && item.images.length > 0 ? item.images : [item.image];
 
   return (
     <motion.div
@@ -20,12 +28,32 @@ export default function Productcard({ item }) {
         to={`/product/${item._id}`}
         className="flex flex-col justify-between h-[80%] p-4"
       >
-        <div className="relative h-[50%] overflow-hidden rounded-lg">
-          <img
-            className="w-full h-full object-contain transform hover:scale-110 transition-transform duration-300"
-            src={item.image}
-            alt={item.title}
-          />
+        <div className="relative h-[70%] overflow-hidden rounded-lg">
+          {images.length > 1 ? (
+            <Swiper
+              modules={[Autoplay, Pagination]}
+              autoplay={{ delay: 2000, disableOnInteraction: false }}
+              pagination={{ clickable: true }}
+              loop={true}
+              className="w-full h-full"
+            >
+              {images.map((img, idx) => (
+                <SwiperSlide key={idx}>
+                  <img
+                    className="w-full h-full  object-cover transform hover:scale-110 transition-transform duration-300"
+                    src={img}
+                    alt={item.title}
+                  />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          ) : (
+            <img
+              className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-300"
+              src={images[0]}
+              alt={item.title}
+            />
+          )}
         </div>
         <div className="productcard__desc p-3 flex flex-col justify-between items-center">
           <div className="w-full">
@@ -35,7 +63,10 @@ export default function Productcard({ item }) {
             <p className="text-sm text-gray-500 mb-2">{item.name}</p>
           </div>
           <div className="flex items-center justify-between w-full">
-            <p className="text-xl font-bold text-primary">${item.price}</p>
+            <p className="text-xl font-bold text-primary">
+              <span className="font-roboto font-normal">EGP </span>
+              {item.price}
+            </p>
           </div>
         </div>
       </NavLink>

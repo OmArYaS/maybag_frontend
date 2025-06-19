@@ -19,19 +19,47 @@ const ProductList = ({ products }) => {
         >
           {item.productId ? (
             <>
-              <div className="w-12 h-12 relative">
-                <img
-                  src={item.productId.image}
-                  alt={item.productId.name}
-                  className="w-12 h-12 object-cover rounded-md border border-gray-100"
-                  onError={(e) => {
-                    e.target.style.display = "none";
-                    e.target.nextElementSibling.style.display = "flex";
-                  }}
-                />
-                <div className="w-12 h-12 hidden items-center justify-center bg-gray-100 rounded-md border border-gray-200">
-                  <i className="fi fi-rr-box text-gray-400"></i>
-                </div>
+              <div className="w-12 h-12 relative flex items-center justify-center">
+                {(() => {
+                  const images =
+                    item.productId.images && item.productId.images.length > 0
+                      ? item.productId.images
+                      : [item.productId.image];
+                  const mainImage = images[0];
+                  return (
+                    <>
+                      <img
+                        src={mainImage}
+                        alt={item.productId.name}
+                        className="w-12 h-12 object-cover rounded-md border border-gray-100"
+                        onError={(e) => {
+                          e.target.style.display = "none";
+                          e.target.nextElementSibling.style.display = "flex";
+                        }}
+                      />
+                      <div className="w-12 h-12 hidden items-center justify-center bg-gray-100 rounded-md border border-gray-200">
+                        <i className="fi fi-rr-box text-gray-400"></i>
+                      </div>
+                      {/* {images.length > 1 && (
+                        <span className="absolute top-0 right-0 bg-black bg-opacity-60 text-white text-[10px] px-1.5 py-0.5 rounded-full z-10">
+                          {images.length}
+                        </span>
+                      )} */}
+                      {/* {images.length > 1 && (
+                        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex gap-0.5 bg-white/80 rounded px-1 py-0.5 shadow">
+                          {images.slice(0, 3).map((img, idx) => (
+                            <img
+                              key={idx}
+                              src={img}
+                              alt={item.productId.name + " thumb " + (idx + 1)}
+                              className="w-3 h-3 object-cover rounded"
+                            />
+                          ))}
+                        </div>
+                      )} */}
+                    </>
+                  );
+                })()}
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-900 truncate">

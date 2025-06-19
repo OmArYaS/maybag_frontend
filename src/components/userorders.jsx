@@ -240,11 +240,44 @@ export default function UserOrders() {
                           animate={{ opacity: 1 }}
                           className="flex items-center space-x-4 p-4 bg-white rounded-lg hover:bg-gray-50 transition-colors"
                         >
-                          <img
-                            src={item.productId.image}
-                            alt={item.productId.name}
-                            className="w-16 h-16 object-cover rounded-lg shadow-sm"
-                          />
+                          {(() => {
+                            const images =
+                              item.productId.images &&
+                              item.productId.images.length > 0
+                                ? item.productId.images
+                                : [item.productId.image];
+                            const mainImage = images[0];
+                            return (
+                              <div className="relative w-16 h-16 flex items-center justify-center">
+                                <img
+                                  src={mainImage}
+                                  alt={item.productId.name}
+                                  className="w-16 h-16 object-cover rounded-lg shadow-sm"
+                                />
+                                {images.length > 1 && (
+                                  <span className="absolute top-0 right-0 bg-black bg-opacity-60 text-white text-xs px-1.5 py-0.5 rounded-full z-10">
+                                    {images.length}
+                                  </span>
+                                )}
+                                {images.length > 1 && (
+                                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex gap-0.5 bg-white/80 rounded px-1 py-0.5 shadow">
+                                    {images.slice(0, 3).map((img, idx) => (
+                                      <img
+                                        key={idx}
+                                        src={img}
+                                        alt={
+                                          item.productId.name +
+                                          " thumb " +
+                                          (idx + 1)
+                                        }
+                                        className="w-3 h-3 object-cover rounded"
+                                      />
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })()}
                           <div className="flex-1">
                             <h4 className="font-medium text-gray-800">
                               {item.productId.name}

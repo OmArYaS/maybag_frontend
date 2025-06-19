@@ -17,10 +17,10 @@ export default function AddProductModal({ isOpen, onClose }) {
     price: "",
     description: "",
     category: "",
-    image: null,
+    images: [],
   });
   const [errors, setErrors] = useState({});
-  const [preview, setPreview] = useState(null);
+  const [previews, setPreviews] = useState([]);
   const { data: categories = [], isLoading: categoriesLoading } =
     useCategories();
 
@@ -41,9 +41,9 @@ export default function AddProductModal({ isOpen, onClose }) {
         price: "",
         description: "",
         category: "",
-        image: null,
+        images: [],
       });
-      setPreview(null);
+      setPreviews([]);
     },
     onError: (error) => {
       toast.error(error.message || "Failed to add product");
@@ -56,7 +56,8 @@ export default function AddProductModal({ isOpen, onClose }) {
     if (!form.price) newErrors.price = "Price is required";
     if (!form.description) newErrors.description = "Description is required";
     if (!form.category) newErrors.category = "Category is required";
-    if (!form.image) newErrors.image = "Image is required";
+    if (!form.images || form.images.length === 0)
+      newErrors.images = "At least one image is required";
     if (form.price && isNaN(form.price))
       newErrors.price = "Price must be a number";
     if (form.stock && isNaN(form.stock))
@@ -67,17 +68,27 @@ export default function AddProductModal({ isOpen, onClose }) {
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: files ? files[0] : value,
-    }));
-
-    if (files && files[0]) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result);
-      };
-      reader.readAsDataURL(files[0]);
+    if (name === "images") {
+      const fileArray = Array.from(files);
+      setForm((prev) => ({
+        ...prev,
+        images: fileArray,
+      }));
+      // Generate previews for all images
+      const previewPromises = fileArray.map(
+        (file) =>
+          new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result);
+            reader.readAsDataURL(file);
+          })
+      );
+      Promise.all(previewPromises).then((results) => setPreviews(results));
+    } else {
+      setForm((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
     }
   };
 
@@ -87,7 +98,11 @@ export default function AddProductModal({ isOpen, onClose }) {
 
     const formData = new FormData();
     Object.entries(form).forEach(([key, value]) => {
-      if (value !== "") {
+      if (key === "images") {
+        value.forEach((img) => {
+          formData.append("images", img);
+        });
+      } else if (value !== "") {
         formData.append(key, value);
       }
     });
@@ -269,28 +284,34 @@ export default function AddProductModal({ isOpen, onClose }) {
 
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Image *
+                    Images *
                   </label>
-                  <div className="mt-1 flex items-center space-x-4">
+                  <div className="mt-1 flex items-center space-x-4 flex-wrap">
                     <input
-                      name="image"
+                      name="images"
                       type="file"
                       accept="image/*"
+                      multiple
                       onChange={handleChange}
                       className={`w-full px-4 py-2 rounded-lg border ${
-                        errors.image ? "border-red-500" : "border-gray-300"
+                        errors.images ? "border-red-500" : "border-gray-300"
                       } focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
                     />
-                    {preview && (
-                      <img
-                        src={preview}
-                        alt="Preview"
-                        className="w-20 h-20 object-cover rounded-lg"
-                      />
+                    {previews.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {previews.map((src, idx) => (
+                          <img
+                            key={idx}
+                            src={src}
+                            alt={`Preview ${idx + 1}`}
+                            className="w-20 h-20 object-cover rounded-lg"
+                          />
+                        ))}
+                      </div>
                     )}
                   </div>
-                  {errors.image && (
-                    <p className="mt-1 text-sm text-red-500">{errors.image}</p>
+                  {errors.images && (
+                    <p className="mt-1 text-sm text-red-500">{errors.images}</p>
                   )}
                 </div>
               </div>

@@ -131,11 +131,39 @@ export default function TableControlProducts({
                     className="hover:bg-gray-50"
                   >
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <img
-                        src={product.image}
-                        alt={product.name}
-                        className="w-12 h-12 object-cover rounded-lg"
-                      />
+                      {(() => {
+                        const images =
+                          product.images && product.images.length > 0
+                            ? product.images
+                            : [product.image];
+                        const mainImage = images[0];
+                        return (
+                          <div className="relative w-12 h-12 flex items-center justify-center">
+                            <img
+                              src={mainImage}
+                              alt={product.name}
+                              className="w-12 h-12 object-cover rounded-lg"
+                            />
+                            {/* {images.length > 1 && (
+                              <span className="absolute top-0 right-0 bg-black bg-opacity-60 text-white text-[10px] px-1.5 py-0.5 rounded-full z-10">
+                                {images.length}
+                              </span>
+                            )} */}
+                            {/* {images.length > 1 && (
+                              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex gap-0.5 bg-white/80 rounded px-1 py-0.5 shadow">
+                                {images.slice(0, 3).map((img, idx) => (
+                                  <img
+                                    key={idx}
+                                    src={img}
+                                    alt={product.name + " thumb " + (idx + 1)}
+                                    className="w-3 h-3 object-cover rounded"
+                                  />
+                                ))}
+                              </div>
+                            )} */}
+                          </div>
+                        );
+                      })()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-900">

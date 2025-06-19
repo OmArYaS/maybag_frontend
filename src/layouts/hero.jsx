@@ -100,7 +100,7 @@ export default function Hero() {
                   className="flex items-center gap-4"
                 >
                   <span className="text-2xl font-bold text-primary">
-                    ${item.price}
+                   <span className="font-roboto">EGP</span> {item.price}
                   </span>
                   <Link
                     to={`/product/${item._id}`}
@@ -114,13 +114,42 @@ export default function Hero() {
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: 0.3 }}
-                className="w-1/2 h-[40vh] flex items-center justify-center"
+                className="w-1/2 h-[40vh] flex items-center justify-center relative"
               >
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  className="max-h-full max-w-full object-contain rounded-lg shadow-xl"
-                />
+                {(() => {
+                  const images =
+                    item.images && item.images.length > 0
+                      ? item.images
+                      : [item.image];
+                  const mainImage = images[0];
+                  return (
+                    <>
+                      <img
+                        src={mainImage}
+                        alt={item.name}
+                        className="max-h-full max-w-full object-cover  rounded-lg shadow-xl"
+                      />
+                      
+                      {images.length > 1 && (
+                        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1 bg-white/70 rounded-md px-2 py-1 shadow">
+                          {images.slice(0, 4).map((img, idx) => (
+                            <img
+                              key={idx}
+                              src={img}
+                              alt={item.name + " thumb " + (idx + 1)}
+                              className="w-6 h-6 object-cover rounded"
+                            />
+                          ))}
+                          {images.length > 4 && (
+                            <span className="ml-1 text-xs text-gray-600">
+                              +{images.length - 4}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </>
+                  );
+                })()}
               </motion.div>
             </motion.div>
           </SwiperSlide>

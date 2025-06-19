@@ -208,11 +208,41 @@ export default function AddedProductByUser() {
                   className="flex flex-col md:flex-row items-center justify-between p-4 bg-gray-50 rounded-lg hover:shadow-md transition-shadow"
                 >
                   <div className="flex items-center space-x-4 mb-4 md:mb-0">
-                    <img
-                      src={item.product.image}
-                      alt={item.product.name}
-                      className="w-20 h-20 object-cover rounded-lg shadow-sm"
-                    />
+                    {(() => {
+                      const images =
+                        item.product.images && item.product.images.length > 0
+                          ? item.product.images
+                          : [item.product.image];
+                      const mainImage = images[0];
+                      return (
+                        <div className="relative w-20 h-20 flex items-center justify-center">
+                          <img
+                            src={mainImage}
+                            alt={item.product.name}
+                            className="w-20 h-20 object-cover rounded-lg shadow-sm"
+                          />
+                          {images.length > 1 && (
+                            <span className="absolute top-0 right-0 bg-black bg-opacity-60 text-white text-xs px-1.5 py-0.5 rounded-full z-10">
+                              {images.length}
+                            </span>
+                          )}
+                          {images.length > 1 && (
+                            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex gap-0.5 bg-white/80 rounded px-1 py-0.5 shadow">
+                              {images.slice(0, 3).map((img, idx) => (
+                                <img
+                                  key={idx}
+                                  src={img}
+                                  alt={
+                                    item.product.name + " thumb " + (idx + 1)
+                                  }
+                                  className="w-4 h-4 object-cover rounded"
+                                />
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })()}
                     <div>
                       <h3 className="font-medium text-gray-800">
                         {item.product.name}

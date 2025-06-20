@@ -4,6 +4,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router";
 import { toast } from "react-toastify";
 import { BACKEND_URL } from "../service/queryfn";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+import { generatePDF } from "../service/generatePDF";
 
 export default function AddedProductByUser() {
   const { token } = useAuth();
@@ -27,14 +30,14 @@ export default function AddedProductByUser() {
 
   // Update cart item quantity
   const updateCartMutation = useMutation({
-    mutationFn: async ({ productId, quantity }) => {
+    mutationFn: async ({ productId, quantity, color }) => {
       const response = await fetch(`${BACKEND_URL}/api/cart/update`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ quantity, productId }),
+        body: JSON.stringify({ quantity, productId, color }),
       });
       if (!response.ok) {
         const error = await response.json();
@@ -127,6 +130,11 @@ export default function AddedProductByUser() {
       toast.error(error.message || "Checkout failed");
     },
   });
+
+  const handleCheckoutClick = () => {
+    // Direct checkout since colors can be selected directly in the cart
+    checkoutMutation.mutate();
+  };
 
   if (isLoading) {
     return (
@@ -221,11 +229,11 @@ export default function AddedProductByUser() {
                             alt={item.product.name}
                             className="w-20 h-20 object-cover rounded-lg shadow-sm"
                           />
-                          {images.length > 1 && (
+                          {/* {images.length > 1 && (
                             <span className="absolute top-0 right-0 bg-black bg-opacity-60 text-white text-xs px-1.5 py-0.5 rounded-full z-10">
                               {images.length}
                             </span>
-                          )}
+                          )} */}
                           {images.length > 1 && (
                             <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex gap-0.5 bg-white/80 rounded px-1 py-0.5 shadow">
                               {images.slice(0, 3).map((img, idx) => (
@@ -248,6 +256,37 @@ export default function AddedProductByUser() {
                         {item.product.name}
                       </h3>
                       <p className="text-gray-600">${item.product.price}</p>
+                      {item.product.color &&
+                        Array.isArray(item.product.color) &&
+                        item.product.color.length > 0 && (
+                          <div className="mt-2">
+                            <label className="block text-xs font-medium text-gray-700 mb-1">
+                              Color:
+                            </label>
+                            <div className="flex flex-wrap gap-1">
+                              {item.product.color.map((color) => (
+                                <button
+                                  key={color}
+                                  onClick={() =>
+                                    updateCartMutation.mutate({
+                                      productId: item.product._id,
+                                      quantity: item.quantity,
+                                      color: color,
+                                    })
+                                  }
+                                  disabled={updateCartMutation.isPending}
+                                  className={`px-2 py-1 rounded text-xs border transition-all duration-200 ${
+                                    item.color === color
+                                      ? "border-blue-500 bg-blue-500 text-white"
+                                      : "border-gray-300 hover:border-blue-300"
+                                  }`}
+                                >
+                                  {color}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                       {item.product.stock < item.quantity && (
                         <p className="text-red-500 text-sm mt-1">
                           Only {item.product.stock} items available
@@ -265,6 +304,7 @@ export default function AddedProductByUser() {
                           updateCartMutation.mutate({
                             productId: item.product._id,
                             quantity: Math.max(1, item.quantity - 1),
+                            color: item.color,
                           })
                         }
                         disabled={updateCartMutation.isPending}
@@ -282,6 +322,7 @@ export default function AddedProductByUser() {
                           updateCartMutation.mutate({
                             productId: item.product._id,
                             quantity: item.quantity + 1,
+                            color: item.color,
                           })
                         }
                         disabled={
@@ -344,7 +385,7 @@ export default function AddedProductByUser() {
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                onClick={() => checkoutMutation.mutate()}
+                onClick={handleCheckoutClick}
                 disabled={checkoutMutation.isPending}
                 className="bg-primary text-white px-8 py-3 rounded-lg hover:contrast-125 transition-colors disabled:opacity-50 shadow-md hover:shadow-lg"
               >

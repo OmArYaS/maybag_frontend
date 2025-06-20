@@ -1,7 +1,12 @@
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import { BACKEND_URL } from "./queryfn";
-export async function addToCart(productId, quantity = 1, navigate) {
+export async function addToCart(
+  productId,
+  quantity = 1,
+  navigate,
+  color = null
+) {
   const token = localStorage.getItem("token");
 
   // ✅ لو مفيش توكن، يبقى المستخدم مش عامل تسجيل دخول
@@ -21,6 +26,7 @@ export async function addToCart(productId, quantity = 1, navigate) {
       body: JSON.stringify({
         productId,
         quantity,
+        color,
       }),
     });
 

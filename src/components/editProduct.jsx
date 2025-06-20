@@ -12,15 +12,17 @@ export default function EditProductModal({ isOpen, onClose, id }) {
     name: "",
     brand: "",
     stock: "",
-    color: "",
+    color: [],
     size: "",
     price: "",
     description: "",
     category: "",
-    image: null,
+    images: [],
   });
   const [errors, setErrors] = useState({});
-  const [preview, setPreview] = useState(null);
+  const [previews, setPreviews] = useState([]);
+  const [existingImages, setExistingImages] = useState([]);
+  const [newColor, setNewColor] = useState("");
   const {
     data: categories = [],
     isLoading: categoriesLoading,
@@ -29,12 +31,62 @@ export default function EditProductModal({ isOpen, onClose, id }) {
 
   const queryClient = useQueryClient();
 
+  useEffect(() => {
+    if (isOpen && id) {
+      const fetchProduct = async () => {
+        try {
+          const response = await fetch(
+            `${
+              process.env.REACT_APP_BACKEND_URL || "http://localhost:5000"
+            }/api/products/${id}`
+          );
+          if (response.ok) {
+            const product = await response.json();
+            setForm({
+              name: product.name || "",
+              brand: product.brand || "",
+              stock: product.stock || "",
+              color: Array.isArray(product.color)
+                ? product.color
+                : product.color
+                ? [product.color]
+                : [],
+              size: product.size || "",
+              price: product.price || "",
+              description: product.description || "",
+              category: product.category?._id || product.category || "",
+              images: [],
+            });
+            setExistingImages(product.images || [product.image] || []);
+          }
+        } catch (error) {
+          console.error("Error fetching product:", error);
+        }
+      };
+      fetchProduct();
+    }
+  }, [isOpen, id]);
+
   const editProductMutation = useMutation({
     mutationFn: editProductMutationFn,
     onSuccess: () => {
       queryClient.invalidateQueries(["products"]);
       toast.success("Product updated successfully");
       onClose();
+      setForm({
+        name: "",
+        brand: "",
+        stock: "",
+        color: [],
+        size: "",
+        price: "",
+        description: "",
+        category: "",
+        images: [],
+      });
+      setPreviews([]);
+      setExistingImages([]);
+      setNewColor("");
     },
     onError: (error) => {
       toast.error(error.message || "Failed to update product");
@@ -53,17 +105,26 @@ export default function EditProductModal({ isOpen, onClose, id }) {
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: files ? files[0] : value,
-    }));
-
-    if (files && files[0]) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result);
-      };
-      reader.readAsDataURL(files[0]);
+    if (name === "images") {
+      const fileArray = Array.from(files);
+      setForm((prev) => ({
+        ...prev,
+        images: fileArray,
+      }));
+      const previewPromises = fileArray.map(
+        (file) =>
+          new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result);
+            reader.readAsDataURL(file);
+          })
+      );
+      Promise.all(previewPromises).then((results) => setPreviews(results));
+    } else {
+      setForm((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
     }
   };
 
@@ -73,11 +134,36 @@ export default function EditProductModal({ isOpen, onClose, id }) {
 
     const formData = new FormData();
     Object.entries(form).forEach(([key, value]) => {
-      if (value !== "" && value !== null) {
+      if (key === "images") {
+        value.forEach((img) => {
+          formData.append("images", img);
+        });
+      } else if (key === "color") {
+        value.forEach((color) => {
+          formData.append("color", color);
+        });
+      } else if (value !== "" && value !== null) {
         formData.append(key, value);
       }
     });
     editProductMutation.mutate({ formData, token, id });
+  };
+
+  const addColor = () => {
+    if (newColor.trim() && !form.color.includes(newColor.trim())) {
+      setForm((prev) => ({
+        ...prev,
+        color: [...prev.color, newColor.trim()],
+      }));
+      setNewColor("");
+    }
+  };
+
+  const removeColor = (colorToRemove) => {
+    setForm((prev) => ({
+      ...prev,
+      color: prev.color.filter((color) => color !== colorToRemove),
+    }));
   };
 
   if (!isOpen) return null;
@@ -182,13 +268,46 @@ export default function EditProductModal({ isOpen, onClose, id }) {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Color
                   </label>
-                  <input
-                    name="color"
-                    value={form.color}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Color"
-                  />
+                  <div className="space-y-2">
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={newColor}
+                        onChange={(e) => setNewColor(e.target.value)}
+                        onKeyPress={(e) =>
+                          e.key === "Enter" && (e.preventDefault(), addColor())
+                        }
+                        className="flex-1 px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Add a color"
+                      />
+                      <button
+                        type="button"
+                        onClick={addColor}
+                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                      >
+                        Add
+                      </button>
+                    </div>
+                    {form.color.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {form.color.map((color, index) => (
+                          <span
+                            key={index}
+                            className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
+                          >
+                            {color}
+                            <button
+                              type="button"
+                              onClick={() => removeColor(color)}
+                              className="text-blue-600 hover:text-blue-800"
+                            >
+                              ×
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 <div>
@@ -246,24 +365,51 @@ export default function EditProductModal({ isOpen, onClose, id }) {
 
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Image
+                    Images
                   </label>
+                  {existingImages.length > 0 && (
+                    <div className="mb-4">
+                      <p className="text-sm text-gray-600 mb-2">
+                        Current images:
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {existingImages.map((img, idx) => (
+                          <img
+                            key={idx}
+                            src={img}
+                            alt={`Current ${idx + 1}`}
+                            className="w-16 h-16 object-cover rounded-lg border border-gray-200"
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
                   <div className="mt-1 flex items-center space-x-4">
                     <input
-                      name="image"
+                      name="images"
                       type="file"
                       accept="image/*"
+                      multiple
                       onChange={handleChange}
                       className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
-                    {preview && (
-                      <img
-                        src={preview}
-                        alt="Preview"
-                        className="w-20 h-20 object-cover rounded-lg"
-                      />
+                    {previews.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {previews.map((src, idx) => (
+                          <img
+                            key={idx}
+                            src={src}
+                            alt={`Preview ${idx + 1}`}
+                            className="w-16 h-16 object-cover rounded-lg border border-gray-200"
+                          />
+                        ))}
+                      </div>
                     )}
                   </div>
+                  <p className="mt-1 text-xs text-gray-500">
+                    Upload new images to replace existing ones. Leave empty to
+                    keep current images.
+                  </p>
                 </div>
               </div>
 

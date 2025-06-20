@@ -182,7 +182,21 @@ export default function TableControlProducts({
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-500">
-                        {product.color || "-"}
+                        {Array.isArray(product.color) &&
+                        product.color.length > 0 ? (
+                          <div className="flex flex-wrap gap-1">
+                            {product.color.map((color, index) => (
+                              <span
+                                key={index}
+                                className="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs"
+                              >
+                                {color}
+                              </span>
+                            ))}
+                          </div>
+                        ) : (
+                          product.color || "-"
+                        )}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">

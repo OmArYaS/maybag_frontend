@@ -254,11 +254,11 @@ export default function UserOrders() {
                                   alt={item.productId.name}
                                   className="w-16 h-16 object-cover rounded-lg shadow-sm"
                                 />
-                                {images.length > 1 && (
+                                {/* {images.length > 1 && (
                                   <span className="absolute top-0 right-0 bg-black bg-opacity-60 text-white text-xs px-1.5 py-0.5 rounded-full z-10">
                                     {images.length}
                                   </span>
-                                )}
+                                )} */}
                                 {images.length > 1 && (
                                   <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex gap-0.5 bg-white/80 rounded px-1 py-0.5 shadow">
                                     {images.slice(0, 3).map((img, idx) => (
@@ -289,6 +289,14 @@ export default function UserOrders() {
                               <p className="text-gray-600">
                                 Price: ${item.productId.price}
                               </p>
+                              {item.color && (
+                                <p className="text-gray-600">
+                                  Color:{" "}
+                                  <span className="inline-block px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full text-xs">
+                                    {item.color}
+                                  </span>
+                                </p>
+                              )}
                             </div>
                           </div>
                           <div className="text-right">

@@ -97,7 +97,7 @@ export default function Product() {
                 className="relative w-full max-w-md aspect-square rounded-xl overflow-hidden bg-gray-100 shadow-lg"
               >
                 <img
-                  src={selectedImage}
+                  src={selectedImage.url}
                   alt={data.name}
                   className="w-full h-full object-contain transition-transform duration-300 hover:scale-105"
                 />
@@ -129,7 +129,7 @@ export default function Product() {
                       style={{ width: 60, height: 60 }}
                     >
                       <img
-                        src={image}
+                        src={image.url}
                         alt={`${data.name} - ${index + 1}`}
                         className="w-full h-full object-cover"
                       />

@@ -225,7 +225,7 @@ export default function AddedProductByUser() {
                       return (
                         <div className="relative w-20 h-20 flex items-center justify-center">
                           <img
-                            src={mainImage}
+                            src={mainImage.url}
                             alt={item.product.name}
                             className="w-20 h-20 object-cover rounded-lg shadow-sm"
                           />
@@ -239,7 +239,7 @@ export default function AddedProductByUser() {
                               {images.slice(0, 3).map((img, idx) => (
                                 <img
                                   key={idx}
-                                  src={img}
+                                  src={img.url}
                                   alt={
                                     item.product.name + " thumb " + (idx + 1)
                                   }

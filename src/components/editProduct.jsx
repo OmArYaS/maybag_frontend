@@ -376,7 +376,7 @@ export default function EditProductModal({ isOpen, onClose, id }) {
                         {existingImages.map((img, idx) => (
                           <img
                             key={idx}
-                            src={img}
+                            src={img.url}
                             alt={`Current ${idx + 1}`}
                             className="w-16 h-16 object-cover rounded-lg border border-gray-200"
                           />
@@ -398,7 +398,7 @@ export default function EditProductModal({ isOpen, onClose, id }) {
                         {previews.map((src, idx) => (
                           <img
                             key={idx}
-                            src={src}
+                            src={src.url}
                             alt={`Preview ${idx + 1}`}
                             className="w-16 h-16 object-cover rounded-lg border border-gray-200"
                           />

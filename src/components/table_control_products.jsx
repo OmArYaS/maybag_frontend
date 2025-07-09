@@ -140,7 +140,7 @@ export default function TableControlProducts({
                         return (
                           <div className="relative w-12 h-12 flex items-center justify-center">
                             <img
-                              src={mainImage}
+                              src={mainImage.url}
                               alt={product.name}
                               className="w-12 h-12 object-cover rounded-lg"
                             />

@@ -125,7 +125,7 @@ export default function Hero() {
                   return (
                     <>
                       <img
-                        src={mainImage}
+                        src={mainImage.url}
                         alt={item.name}
                         className="max-h-full max-w-full object-cover  rounded-lg shadow-xl"
                       />
@@ -135,7 +135,7 @@ export default function Hero() {
                           {images.slice(0, 4).map((img, idx) => (
                             <img
                               key={idx}
-                              src={img}
+                              src={img.url}
                               alt={item.name + " thumb " + (idx + 1)}
                               className="w-6 h-6 object-cover rounded"
                             />

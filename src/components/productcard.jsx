@@ -41,7 +41,7 @@ export default function Productcard({ item }) {
                 <SwiperSlide key={idx}>
                   <img
                     className="w-full h-full  object-cover transform hover:scale-110 transition-transform duration-300"
-                    src={img}
+                    src={img.url}
                     alt={item.title}
                   />
                 </SwiperSlide>
@@ -50,7 +50,7 @@ export default function Productcard({ item }) {
           ) : (
             <img
               className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-300"
-              src={images[0]}
+              src={images[0].url}
               alt={item.title}
             />
           )}

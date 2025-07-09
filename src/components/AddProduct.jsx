@@ -358,7 +358,7 @@ export default function AddProductModal({ isOpen, onClose }) {
                         {previews.map((src, idx) => (
                           <img
                             key={idx}
-                            src={src}
+                            src={src.url}
                             alt={`Preview ${idx + 1}`}
                             className="w-20 h-20 object-cover rounded-lg"
                           />

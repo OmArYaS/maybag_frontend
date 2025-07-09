@@ -29,7 +29,7 @@ const ProductList = ({ products }) => {
                   return (
                     <>
                       <img
-                        src={mainImage}
+                        src={mainImage.url}
                         alt={item.productId.name}
                         className="w-12 h-12 object-cover rounded-md border border-gray-100"
                         onError={(e) => {

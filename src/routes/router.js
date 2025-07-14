@@ -22,6 +22,7 @@ import About from "../pages/about.jsx";
 import ErrorBoundary from "../components/ErrorBoundary";
 import RouteError from "../components/RouteError.jsx";
 import { BACKEND_URL } from "../service/queryfn.js";
+import contactUs from "../pages/contactUs.jsx";
 export default createBrowserRouter([
   {
     path: "/",
@@ -102,6 +103,10 @@ export default createBrowserRouter([
       {
         path: "/about",
         Component: About,
+      },
+      {
+        path: "/contact",
+        Component: contactUs,
       },
     ],
   },

@@ -21,7 +21,6 @@ export default function Topnav() {
   const menuItems = [
     { to: "products", label: "Products" },
     { to: "about", label: "About" },
-    { to: "contact", label: "Contact" },
   ];
 
   return (
